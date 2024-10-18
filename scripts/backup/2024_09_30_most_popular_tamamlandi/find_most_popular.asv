@@ -1,0 +1,48 @@
+clc;
+clear;
+
+disp("Start prepare debias to user item matrix");
+
+
+m_filename = "MLM.mat";
+% m_filename = "DoubanBooks.mat";
+% m_filename = "Yelp.mat";
+
+m_path = strcat('../output/0_datasets/', m_filename);
+
+
+
+m_predictions = load(m_path);
+temp_predictions = struct2cell(m_predictions);
+m_predictions = temp_predictions{1};
+
+
+% İkinci kolondaki benzersiz değerleri bul
+uniqueValues = unique(m_predictions(:, 2));
+
+% Sonuçları depolamak için bir matris oluştur (benzersiz değerler ve sayılar)
+resultMatrix = zeros(length(uniqueValues), 2);
+
+% Döngü ile benzersiz değerlerin her birinden kaç tane olduğunu elle sayma
+for i = 1:length(uniqueValues)
+    currentValue = uniqueValues(i);  % Şu anki benzersiz değer
+    count = 0;  % Sayaç başlangıcı
+    for j = 1:size(m_predictions, 1)  % Her satır için kontrol
+        if m_predictions(j, 2) == currentValue
+            count = count + 1;  % Eğer değer eşitse sayacı artır
+        end
+    end
+    resultMatrix(i, :) = [currentValue, count];  % Sonucu resultMatrix'e yaz
+end
+
+% Sonucu ekrana yazdırma
+disp(resultMatrix);
+
+
+
+
+
+
+
+
+disp("finish prepare debias to user item matrix");
